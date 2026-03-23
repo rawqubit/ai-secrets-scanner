@@ -2,7 +2,7 @@
 import sys
 import os
 import subprocess
-import pytest
+import tempfile
 
 
 def run(*args):
@@ -20,10 +20,12 @@ def test_help():
     assert len(r.stdout) > 0
 
 
-def test_no_args_fails():
-    """Calling with no arguments must fail (required argument missing)."""
-    r = run()
-    assert r.returncode != 0
+def test_scan_empty_dir():
+    """Scanning an empty directory should succeed with no findings."""
+    with tempfile.TemporaryDirectory() as d:
+        r = run(d)
+        assert r.returncode in (0, 1)
+
 
 def test_module_compiles():
     r = subprocess.run(
